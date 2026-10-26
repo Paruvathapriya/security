@@ -296,3 +296,34 @@ else:
 print("Only the private key can be used")
 print("to create the signature.")
 print("Anyone can verify using the public key.")
+
+
+#aes encrypt only plain text
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import hashlib
+
+text = input("Enter plaintext: ")
+
+key = b"1234567890123456"
+iv = b"1234567890123456"
+
+# Generate MD5 hash
+h1 = hashlib.md5(text.encode()).hexdigest()
+print("Original MD5 Hash:", h1)
+
+# AES Encryption
+cipher = AES.new(key, AES.MODE_CBC, iv)
+encrypted = cipher.encrypt(pad(text.encode(), 16))
+print("Encrypted Text:", encrypted.hex())
+
+# AES Decryption
+cipher = AES.new(key, AES.MODE_CBC, iv)
+decrypted = unpad(cipher.decrypt(encrypted), 16).decode()
+print("Decrypted Text:", decrypted)
+
+# Verify MD5 hash
+h2 = hashlib.md5(decrypted.encode()).hexdigest()
+print("Decrypted MD5 Hash:", h2)
+
+print("Hash Match:", h1 == h2)
