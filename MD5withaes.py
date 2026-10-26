@@ -1,5 +1,5 @@
-
-# AES ENCRYPTION WITH MD5 HASH VERIFICATION
+#only hash
+# AES ENCRYPTION WITH MD5 HASH
 
 # Import AES cipher
 from Crypto.Cipher import AES
@@ -13,38 +13,29 @@ import hashlib
 # Get message from user
 message = input("Enter message: ")
 
-# Set 16-byte secret key and initialization vector
+# Set 16-byte key and IV
 key = b"1234567890123456"
 iv = b"1234567890123456"
 
-# Generate hash
+# Generate MD5 hash
 h = hashlib.md5(message.encode()).hexdigest()
 print("Original Hash:", h)
 
-# Attach hash to message
-data = message + "|" + h
-
-# Encrypt message and hash using AES-CBC
+# Encrypt only the hash
 cipher = AES.new(key, AES.MODE_CBC, iv)
-encrypted = cipher.encrypt(pad(data.encode(), 16))
-print("Encrypted:", encrypted.hex())
+encrypted_hash = cipher.encrypt(pad(h.encode(), 16))
+print("Encrypted Hash:", encrypted_hash.hex())
 
-# Decrypt encrypted data
+# Decrypt the hash
 cipher = AES.new(key, AES.MODE_CBC, iv)
-decrypted = unpad(cipher.decrypt(encrypted), 16).decode()
+decrypted_hash = unpad(cipher.decrypt(encrypted_hash), 16).decode()
 
-# Separate message and received hash
-msg, received_hash = decrypted.rsplit("|", 1)
+print("Decrypted Hash:", decrypted_hash)
 
-# Display decrypted message and hash
-print("Decrypted Message:", msg)
-print("Received Hash:", received_hash)
+# Verify hash
+new_hash = hashlib.md5(message.encode()).hexdigest()
 
-# Verify
-new_hash = hashlib.md5(msg.encode()).hexdigest()
-
-# Compare original and received hashes
-if new_hash == received_hash:
+if new_hash == decrypted_hash:
     print("Hash Verified")
 else:
     print("Hash Mismatch")
