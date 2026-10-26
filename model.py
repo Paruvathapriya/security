@@ -298,7 +298,7 @@ print("to create the signature.")
 print("Anyone can verify using the public key.")
 
 
-#aes encrypt only plain text
+#aes encrypt only plain text(aes with md5)
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import hashlib
